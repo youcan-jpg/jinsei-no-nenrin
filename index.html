@@ -73,21 +73,75 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
 </section>
 
 <section id="growth"><div class="container"><div class="section-title"><span class="kicker">DIGITAL TREE</span><h2>Web上の木は、経験で育っていく</h2><p>実物の木の年輪は変わりません。利用者が残した経験によって、デジタルの木に枝や葉が増えていきます。</p></div><div class="tree-growth">
-<div class="webtree"><div class="counter">デモ上の経験数<br><b id="count">128</b> 件</div><div class="wt"></div><div class="wb a"></div><div class="wb b"></div><div class="wb c"></div><div class="wb d"></div><i class="wleaf w1"></i><i class="wleaf w2"></i><i class="wleaf w3"></i><i class="wleaf w4"></i><i class="wleaf w5"></i><i class="wleaf w6"></i><i class="wleaf w7"></i><div class="ground"></div></div>
+<div class="webtree"><div class="counter">デモ上の経験数<br<b id="count">0</b>件</div><div class="wt"></div><div class="wb a"></div><div class="wb b"></div><div class="wb c"></div><div class="wb d"></div><i class="wleaf w1"></i><i class="wleaf w2"></i><i class="wleaf w3"></i><i class="wleaf w4"></i><i class="wleaf w5"></i><i class="wleaf w6"></i><i class="wleaf w7"></i><div class="ground"></div></div>
 <div class="growth-copy"><h3>あなたの一歩が、<br>次の誰かの枝になる。</h3><p>誰かの経験を受け取るだけで終わらない。自分が考えたこと、実際にしてみたこと、その結果を残すことで、次に人生を生きる人へ知恵がつながります。</p><ul class="growth-list"><li>経験は一度きりではなく、人生の中で何度でも更新できる</li><li>「いいね」の数ではなく、誰かの思考や行動につながったかを大切にする</li><li>実物の木は固定された象徴、Webの木が知恵の蓄積を表現する</li></ul><button class="btn" onclick="openReflection()">自分の経験を残す</button></div>
 </div></div></section>
 
 <section><div class="container"><div class="cta"><div class="kicker">THE QUESTION</div><h2>あなたは、どう生きますか？</h2><p>先人の答えではなく、先人が生きた証から、自分の答えを見つける。<br>そしていつか、あなたも誰かの「先人」になる。</p><button class="btn" onclick="openReflection()">今の自分の答えを書く</button></div></div></section>
+<section id="experience-list">
+  <div class="container">
+    <div class="section-title">
+      <span class="kicker">SHARED EXPERIENCES</span>
+      <h2>みんなの人生の年輪</h2>
+      <p>誰かの経験が、次の誰かの考えるきっかけになる。</p>
+    </div>
+
+    <div id="experiencesList" class="grid3">
+      <p>経験を読み込んでいます...</p>
+    </div>
+
+    <p id="experiencesError"
+       style="text-align:center;color:#a44;"></p>
+  </div>
+</section>
 </main>
 
 <footer><div class="container" style="text-align:center"><div>人生の年輪 — 考えるきっかけを継ぐ</div><div class="footer-links"><a href="privacy.html">プライバシーポリシー</a><a href="terms.html">利用規約</a><a href="guidelines.html">投稿ガイドライン</a></div><div class="copyright">© 2026 人生の年輪プロジェクト</div></div></footer>
 
-<!-- 投稿用モーダル -->
-<div class="modal" id="modal"><div class="modal-box"><button class="close" onclick="closeModal()" aria-label="閉じる">×</button><div class="kicker">REFLECTION</div><h2>あなたはどう生きますか？</h2><p style="color:#6c746c;line-height:1.8">先人の経験を受け取った今、あなた自身はどう考えますか？</p><textarea id="reflection" maxlength="1000" placeholder="例：失敗を怖がって先延ばしにせず、今月中に一度挑戦してみる。"></textarea>
-<div style="margin: 15px 0; font-size: 13px;">
-  <label><input type="checkbox" id="isPublicCheck" checked> この投稿を公開する（他のユーザーも閲覧できるようにする）</label>
+<!-- 経験投稿用モーダル -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="close" onclick="closeModal()" aria-label="閉じる">×</button>
+
+    <div class="kicker">SHARE YOUR EXPERIENCE</div>
+    <h2>あなたの経験を次の人へ</h2>
+
+    <p style="color:#6c746c;line-height:1.8">
+      あなたが経験したことや、そこから学んだことを教えてください。
+    </p>
+
+    <label for="experienceTitle">① 経験のタイトル</label>
+    <input
+      type="text"
+      id="experienceTitle"
+      maxlength="80"
+      placeholder="例：勇気を出して挑戦したこと"
+      style="width:100%;padding:12px;margin:8px 0 18px;border:1px solid #ded7c9;border-radius:12px;"
+    >
+
+    <label for="experienceStory">② どんな経験をしましたか？</label>
+    <textarea
+      id="experienceStory"
+      maxlength="2000"
+      placeholder="実際にあった出来事や、そのときの状況・気持ちを書いてください。"
+    ></textarea>
+
+    <label for="experienceLesson">③ その経験から感じたこと・学んだこと</label>
+    <textarea
+      id="experienceLesson"
+      maxlength="1000"
+      placeholder="その経験を通して気づいたこと、学んだことを書いてください。"
+    ></textarea>
+
+    <p style="font-size:12px;color:#687169;line-height:1.7">
+      ※投稿内容は公開され、ほかの利用者も閲覧できます。氏名・住所・連絡先などの個人情報は書かないでください。
+    </p>
+
+    <button class="btn" onclick="saveExperience()">
+      経験を投稿する
+    </button>
+  </div>
 </div>
-<button class="btn" onclick="saveReflection()">この答えをサーバーに残す</button></div></div>
 
 <!-- ログイン用モーダル -->
 <div class="modal" id="authModal"><div class="modal-box"><button class="close" onclick="closeAuthModal()" aria-label="閉じる">×</button><div class="kicker">ACCOUNT</div><h2>ログイン / 新規登録</h2><p style="color:#6c746c;line-height:1.8">自分の投稿を非公開で保護したり、安全に管理するためにログインします。</p>
@@ -103,10 +157,17 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
 
 <!-- Firebase SDK (Modular CDN) -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  
-  import {
+
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInAnonymously,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+import {
   getFirestore,
   collection,
   addDoc,
@@ -114,176 +175,195 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
   getDocs,
   query,
   where
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBkwVFPFo5Lxa_hi591O8j91HpqCIrnrNA",
-    authDomain: "jinseino-nenrin.firebaseapp.com",
-    projectId: "jinseino-nenrin",
-    storageBucket: "jinseino-nenrin.firebasestorage.app",
-    messagingSenderId: "815732739942",
-    appId: "1:815732739942:web:75bbc41f0f4b882803c2a7",
-    measurementId: "G-LYGEFXDZ6E"
-  };
+// ここには現在使用しているfirebaseConfigをそのまま残す
+const firebaseConfig = {
+  // 既存の設定を残してください
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  let currentUser = null;
-  
-// 公開投稿をFirebaseから取得して画面に表示する
-async function loadPublicPosts() {
-  const postsList = document.getElementById("postsList");
-  const postsError = document.getElementById("postsError");
+let currentUser = null;
 
-  postsList.replaceChildren();
-  postsError.textContent = "";
+// 匿名認証：利用者にログイン操作を求めない
+const authReady = new Promise((resolve, reject) => {
+  const unsubscribe = onAuthStateChanged(auth, user => {
+    unsubscribe();
 
-  const loading = document.createElement("p");
-  loading.textContent = "投稿を読み込んでいます...";
-  postsList.appendChild(loading);
+    if (user) {
+      currentUser = user;
+      resolve(user);
+    } else {
+      signInAnonymously(auth)
+        .then(result => {
+          currentUser = result.user;
+          resolve(result.user);
+        })
+        .catch(reject);
+    }
+  });
+});
+
+
+// 公開されている経験を読み込む
+async function loadExperiences() {
+  const list = document.getElementById("experiencesList");
+  const error = document.getElementById("experiencesError");
+  const count = document.getElementById("count");
 
   try {
-    // 公開されている投稿だけを取得
-    const postsQuery = query(
-      collection(db, "posts"),
+    const q = query(
+      collection(db, "experiences"),
       where("isPublic", "==", true)
     );
 
-    const snapshot = await getDocs(postsQuery);
+    const snapshot = await getDocs(q);
 
-    postsList.replaceChildren();
+    // 公開経験数を更新
+    count.textContent = snapshot.size;
+
+    list.replaceChildren();
+    error.textContent = "";
 
     if (snapshot.empty) {
-      const empty = document.createElement("p");
-      empty.textContent = "まだ公開されている投稿はありません。";
-      postsList.appendChild(empty);
+      const message = document.createElement("p");
+      message.textContent = "まだ公開されている経験はありません。";
+      list.appendChild(message);
       return;
     }
 
-    // 新しい投稿が先に表示されるように並べ替え
-    const posts = snapshot.docs.map(doc => ({
+    const experiences = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
 
-    posts.sort((a, b) => {
+    // 新しい投稿を上に表示
+    experiences.sort((a, b) => {
       const timeA = a.createdAt?.toMillis?.() ?? 0;
       const timeB = b.createdAt?.toMillis?.() ?? 0;
       return timeB - timeA;
     });
 
-    // 投稿を画面に表示
-    posts.forEach(post => {
+    experiences.forEach(item => {
       const card = document.createElement("article");
       card.className = "card";
 
-      const title = document.createElement("h3");
-      title.textContent = "誰かの人生の経験";
+      const theme = document.createElement("small");
+      theme.textContent = item.theme || "人生の経験";
+      theme.style.color = "#56735b";
 
-      const content = document.createElement("p");
-      content.textContent = post.text;
+      const title = document.createElement("h3");
+      title.textContent = item.title || "誰かの人生の経験";
+
+      const storyHeading = document.createElement("strong");
+      storyHeading.textContent = "経験";
+
+      const story = document.createElement("p");
+      story.textContent = item.story || "";
+
+      const lessonHeading = document.createElement("strong");
+      lessonHeading.textContent = "感じたこと・学んだこと";
+
+      const lesson = document.createElement("p");
+      lesson.textContent = item.lesson || "";
 
       const date = document.createElement("small");
       date.style.color = "#687169";
 
-      if (post.createdAt?.toDate) {
-        date.textContent = post.createdAt
+      if (item.createdAt?.toDate) {
+        date.textContent = item.createdAt
           .toDate()
           .toLocaleDateString("ja-JP");
-      } else {
-        date.textContent = "投稿日時：確認中";
       }
 
-      card.append(title, content, date);
-      postsList.appendChild(card);
+      card.append(
+        theme,
+        title,
+        storyHeading,
+        story,
+        lessonHeading,
+        lesson,
+        date
+      );
+
+      list.appendChild(card);
     });
 
-  } catch (error) {
-    console.error("公開投稿の取得エラー:", error);
+  } catch (e) {
+    console.error("経験の読み込みエラー:", e);
 
-    postsList.replaceChildren();
-    postsError.textContent =
-      "投稿を読み込めませんでした。時間をおいて再度お試しください。";
+    list.replaceChildren();
+    error.textContent =
+      "経験を読み込めませんでした。Firestoreの設定を確認してください。";
+
+    count.textContent = "—";
   }
 }
-// ページを開いたときに公開投稿を読み込む
-loadPublicPosts();
 
-  // 認証状態の監視
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    const authStatusEl = document.getElementById("authStatus");
-    if (user) {
-      authStatusEl.textContent = user.email + " (ログアウト)";
-      authStatusEl.onclick = () => {
-        signOut(auth).then(() => showToast("ログアウトしました"));
-      };
-    } else {
-      authStatusEl.textContent = "ログイン / 登録";
-      authStatusEl.onclick = openAuthModal;
-    }
-  });
 
-  // グローバルに公開する関数
-  window.loginEmail = async () => {
-    const email = document.getElementById("authEmail").value;
-    const pass = document.getElementById("authPassword").value;
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-      closeAuthModal();
-      showToast("ログインしました！");
-    } catch (e) {
-      alert("ログインエラー: " + e.message);
-    }
-  };
+// 経験をFirestoreに保存
+window.saveExperience = async () => {
+  const title = document
+    .getElementById("experienceTitle").value.trim();
 
-  window.registerEmail = async () => {
-    const email = document.getElementById("authEmail").value;
-    const pass = document.getElementById("authPassword").value;
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-      closeAuthModal();
-      showToast("アカウントを作成し、ログインしました！");
-    } catch (e) {
-      alert("登録エラー: " + e.message);
-    }
-  };
+  const story = document
+    .getElementById("experienceStory").value.trim();
 
-  window.saveReflection = async () => {
-    const text = document.getElementById("reflection").value.trim();
-    if (!text) {
-      showToast("まず、あなたの答えを書いてみてください。");
-      return;
-    }
-    if (!currentUser) {
-      alert("投稿するにはログインが必要です。画面上部の「ログイン / 登録」からログインしてください。");
-      openAuthModal();
-      return;
-    }
+  const lesson = document
+    .getElementById("experienceLesson").value.trim();
 
-    const isPublic = document.getElementById("isPublicCheck").checked;
+  const theme =
+    document.querySelector(".theme.active")?.dataset.theme || "その他";
 
-    try {
-      await addDoc(collection(db, "posts"), {
-        text: text,
-        isPublic: isPublic,
-        ownerUid: currentUser.uid,
-        createdAt: serverTimestamp()
-      });
-      await loadPublicPosts();
-      
-      closeModal();
-      document.getElementById("reflection").value = "";
-      showToast("あなたの答えをFirestoreに保存しました！");
-    } catch (e) {
-      console.error(e);
-      alert("保存に失敗しました（セキュリティルールを確認してください）。");
-    }
-  };
+  if (!title || !story || !lesson) {
+    showToast("タイトル・経験・学んだことを入力してください。");
+    return;
+  }
+
+  try {
+    // 匿名認証が完了するまで待つ
+    const user = await authReady;
+
+    await addDoc(collection(db, "experiences"), {
+      uid: user.uid,
+      theme: theme,
+      title: title,
+      story: story,
+      lesson: lesson,
+      isPublic: true,
+      createdAt: serverTimestamp()
+    });
+
+    // 入力欄を空にする
+    document.getElementById("experienceTitle").value = "";
+    document.getElementById("experienceStory").value = "";
+    document.getElementById("experienceLesson").value = "";
+
+    closeModal();
+
+    showToast("あなたの経験を保存しました！");
+
+    // 保存後に経験数と一覧を更新
+    await loadExperiences();
+
+  } catch (e) {
+    console.error("経験の保存エラー:", e);
+
+    alert(
+      "保存できませんでした。Firebaseの匿名認証とFirestoreルールを確認してください。\n" +
+      (e.code || e.message)
+    );
+  }
+};
+
+
+// ページを開いたときに経験を読み込む
+loadExperiences();
+
 </script>
-
 <script>
 const stories={
 "挑戦":{title:"怖くても、一度やってみればよかった",quote:"「失敗したことより、やらなかったことの方を長く後悔した。若い頃の自分に伝えるなら、完璧になるまで待たなくていい、と伝えたい。」"},
@@ -298,7 +378,7 @@ function openAuthModal(){document.getElementById("authModal").classList.add("ope
 function closeAuthModal(){document.getElementById("authModal").classList.remove("open")}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2600)}
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
-document.getElementById("authModal").addEventListener("click",e=>{if(e.target.id==="authModal")closeAuthModal()});
+
 </script>
 </body>
 </html>
