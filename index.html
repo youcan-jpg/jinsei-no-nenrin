@@ -73,6 +73,41 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
 .webtree[data-stage="3"] .wleaf:nth-child(n+10) {
   opacity: 0;
 }
+
+
+/* 第2段階：枝が伸びる（5〜9件） */
+.webtree[data-stage="1"] .wt {
+  height: 155px;
+  width: 34px;
+}
+
+.webtree[data-stage="1"] .wb.a,
+.webtree[data-stage="1"] .wb.b {
+  opacity: 1;
+}
+
+/* 第3段階：葉と枝が増える（10〜19件） */
+.webtree[data-stage="2"] .wt {
+  height: 190px;
+  width: 40px;
+}
+
+.webtree[data-stage="2"] .wb.a,
+.webtree[data-stage="2"] .wb.b,
+.webtree[data-stage="2"] .wb.c {
+  opacity: 1;
+}
+
+/* 第4段階：大きく成長（20〜39件） */
+.webtree[data-stage="3"] .wt {
+  height: 225px;
+  width: 46px;
+}
+
+.webtree[data-stage="3"] .wb {
+  opacity: 1;
+}
+
    
 /* 第5段階：豊かな大木（40件以上） */
 .webtree[data-stage="4"] .wt {
