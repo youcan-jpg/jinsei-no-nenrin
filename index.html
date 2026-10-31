@@ -139,6 +139,7 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Firebase SDK (Modular CDN) -->
+
 <script type="module">
 
 import { initializeApp } from
@@ -146,7 +147,9 @@ import { initializeApp } from
 
 import {
   getAuth,
-  signInAnonymously,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
@@ -160,9 +163,13 @@ import {
   where
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// ここには現在使用しているfirebaseConfigをそのまま残す
+// =====================================
+// Firebase設定
+// =====================================
+
+// ★現在使用している実際のfirebaseConfigを残してください
 const firebaseConfig = {
-  // 既存の設定を残してください
+  // ここに現在のFirebase設定をそのまま入れる
 };
 
 const app = initializeApp(firebaseConfig);
@@ -171,41 +178,167 @@ const db = getFirestore(app);
 
 let currentUser = null;
 
-// 匿名認証：利用者にログイン操作を求めない
-const authReady = new Promise((resolve, reject) => {
-  const unsubscribe = onAuthStateChanged(auth, user => {
-    unsubscribe();
 
-    if (user) {
-      currentUser = user;
-      resolve(user);
-    } else {
-      signInAnonymously(auth)
-        .then(result => {
-          currentUser = result.user;
-          resolve(result.user);
-        })
-        .catch(reject);
-    }
-  });
+// =====================================
+// ログイン状態の管理
+// =====================================
+
+onAuthStateChanged(auth, async (user) => {
+
+  currentUser = user;
+
+  const status = document.getElementById("authStatus");
+
+  if (user) {
+    status.textContent = user.email + "（ログアウト）";
+    status.onclick = window.logoutEmail;
+
+  } else {
+    status.textContent = "ログイン / 登録";
+    status.onclick = window.openAuthModal;
+  }
+
+  await loadExperiences();
 });
 
 
+// =====================================
+// 新規会員登録
+// =====================================
 
-// 公開されている経験をFirestoreから読み込む
+window.registerEmail = async () => {
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  if (!email || !password) {
+    alert("メールアドレスとパスワードを入力してください。");
+    return;
+  }
+
+  if (password.length < 6) {
+    alert("パスワードは6文字以上にしてください。");
+    return;
+  }
+
+  try {
+
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    closeAuthModal();
+    showToast("新規登録が完了しました！");
+
+  } catch (e) {
+
+    console.error("登録エラー:", e);
+
+    alert(
+      "登録できませんでした。\n" +
+      (e.code || e.message)
+    );
+  }
+};
+
+
+// =====================================
+// ログイン
+// =====================================
+
+window.loginEmail = async () => {
+
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  if (!email || !password) {
+    alert("メールアドレスとパスワードを入力してください。");
+    return;
+  }
+
+  try {
+
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    closeAuthModal();
+    showToast("ログインしました！");
+
+  } catch (e) {
+
+    console.error("ログインエラー:", e);
+
+    alert(
+      "ログインできませんでした。\n" +
+      (e.code || e.message)
+    );
+  }
+};
+
+
+// =====================================
+// ログアウト
+// =====================================
+
+window.logoutEmail = async () => {
+
+  if (!confirm("ログアウトしますか？")) {
+    return;
+  }
+
+  try {
+
+    await signOut(auth);
+
+    showToast("ログアウトしました。");
+
+  } catch (e) {
+
+    console.error("ログアウトエラー:", e);
+
+    alert("ログアウトできませんでした。");
+  }
+};
+
+
+// =====================================
+// 公開されている経験を読み込む
+// =====================================
+
 async function loadExperiences() {
+
   const list = document.getElementById("experiencesList");
   const error = document.getElementById("experiencesError");
   const count = document.getElementById("count");
 
   try {
-    list.textContent = "投稿を読み込んでいます...";
+
+    list.replaceChildren();
     error.textContent = "";
 
-    // ★重要：Firebaseの匿名認証が完了するまで待つ
-    await authReady;
+    // ログインしていない場合は閲覧不可
+    if (!currentUser) {
 
-    // 公開設定がtrueの投稿だけ取得する
+      const message = document.createElement("p");
+
+      message.textContent =
+        "ほかの人の経験を閲覧するには、ログインまたは新規登録してください。";
+
+      list.appendChild(message);
+
+      if (count) {
+        count.textContent = "—";
+      }
+
+      return;
+    }
+
+    // 公開投稿だけ取得
     const q = query(
       collection(db, "experiences"),
       where("isPublic", "==", true)
@@ -213,18 +346,19 @@ async function loadExperiences() {
 
     const snapshot = await getDocs(q);
 
-    // 投稿数を更新
     if (count) {
       count.textContent = snapshot.size;
     }
 
-    list.replaceChildren();
-
     if (snapshot.empty) {
+
       const message = document.createElement("p");
+
       message.textContent =
         "まだ公開されている経験はありません。";
+
       list.appendChild(message);
+
       return;
     }
 
@@ -236,13 +370,16 @@ async function loadExperiences() {
 
     // 新しい投稿を上に表示
     experiences.sort((a, b) => {
+
       const timeA = a.createdAt?.toMillis?.() ?? 0;
       const timeB = b.createdAt?.toMillis?.() ?? 0;
+
       return timeB - timeA;
     });
 
     // 投稿カードを作成
     experiences.forEach(item => {
+
       const card = document.createElement("article");
       card.className = "card";
 
@@ -269,6 +406,7 @@ async function loadExperiences() {
       date.style.color = "#687169";
 
       if (item.createdAt?.toDate) {
+
         date.textContent = item.createdAt
           .toDate()
           .toLocaleDateString("ja-JP");
@@ -288,25 +426,26 @@ async function loadExperiences() {
     });
 
   } catch (e) {
+
     console.error("経験の読み込みエラー:", e);
 
     list.replaceChildren();
 
     error.textContent =
-      "投稿を読み込めませんでした。";
+      "経験を読み込めませんでした。Firebaseの設定を確認してください。";
 
     if (count) {
       count.textContent = "—";
     }
-
-    // 原因を詳しく確認する
-    console.error("エラーコード:", e.code);
-    console.error("エラー内容:", e.message);
   }
 }
 
-// ページを開いたときに投稿を読み込む
-loadExperiences();
+
+// =====================================
+// 経験をFirestoreに保存
+// =====================================
+
+window.saveExperience = async () => {
 
   const title = document
     .getElementById("experienceTitle").value.trim();
@@ -320,26 +459,42 @@ loadExperiences();
   const theme =
     document.querySelector(".theme.active")?.dataset.theme || "その他";
 
+  if (!currentUser) {
+
+    showToast("投稿するにはログインしてください。");
+
+    openAuthModal();
+
+    return;
+  }
+
   if (!title || !story || !lesson) {
+
     showToast("タイトル・経験・学んだことを入力してください。");
+
     return;
   }
 
   try {
-    // 匿名認証が完了するまで待つ
-    const user = await authReady;
 
     await addDoc(collection(db, "experiences"), {
-      uid: user.uid,
+
+      uid: currentUser.uid,
+
       theme: theme,
+
       title: title,
+
       story: story,
+
       lesson: lesson,
+
       isPublic: true,
+
       createdAt: serverTimestamp()
+
     });
 
-    // 入力欄を空にする
     document.getElementById("experienceTitle").value = "";
     document.getElementById("experienceStory").value = "";
     document.getElementById("experienceLesson").value = "";
@@ -348,24 +503,21 @@ loadExperiences();
 
     showToast("あなたの経験を保存しました！");
 
-    // 保存後に経験数と一覧を更新
     await loadExperiences();
 
   } catch (e) {
+
     console.error("経験の保存エラー:", e);
 
     alert(
-      "保存できませんでした。Firebaseの匿名認証とFirestoreルールを確認してください。\n" +
+      "保存できませんでした。\n" +
       (e.code || e.message)
     );
   }
 };
 
-
-// ページを開いたときに経験を読み込む
-loadExperiences();
-
 </script>
+
 <script>
 const stories={
 "挑戦":{title:"怖くても、一度やってみればよかった",quote:"「失敗したことより、やらなかったことの方を長く後悔した。若い頃の自分に伝えるなら、完璧になるまで待たなくていい、と伝えたい。」"},
