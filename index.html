@@ -448,6 +448,34 @@ window.logoutEmail = async () => {
 // =====================================
 
 
+
+// =====================================
+// 投稿数に応じて木を成長させる
+// =====================================
+
+function updateTreeGrowth(experienceCount) {
+
+  const tree = document.querySelector(".webtree");
+
+  if (!tree) return;
+
+  let stage = 0;
+
+  if (experienceCount >= 40) {
+    stage = 4;
+  } else if (experienceCount >= 20) {
+    stage = 3;
+  } else if (experienceCount >= 10) {
+    stage = 2;
+  } else if (experienceCount >= 5) {
+    stage = 1;
+  }
+
+  // 木の成長段階を変更
+  tree.dataset.stage = stage;
+}
+
+   
 // =====================================
 // 公開投稿と自分の非公開投稿を読み込む
 // =====================================
