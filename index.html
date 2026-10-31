@@ -372,7 +372,10 @@ const stories={
 "後悔":{title:"後悔は、次の選択の材料になる",quote:"「後悔を消そうとするより、なぜ後悔したのかを考えた。そうすると、次に同じ場面が来たときの選び方が変わった。」"},
 "選択":{title:"正解を探しすぎなくてもいい",quote:"「人生には、後から見ても正解だったか分からない選択がある。それでも、自分で選んだ理由を持って進むことが大切だった。」"}};
 document.querySelectorAll(".theme").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".theme").forEach(b=>b.classList.remove("active"));btn.classList.add("active");const s=stories[btn.dataset.theme];document.getElementById("storyTag").textContent="THEME / "+btn.dataset.theme;document.getElementById("storyTitle").textContent=s.title;document.getElementById("storyQuote").textContent=s.quote;}));
-function openReflection(){document.getElementById("modal").classList.add("open");document.getElementById("reflection").focus()}
+function openReflection(){
+  document.getElementById("modal").classList.add("open");
+  document.getElementById("experienceTitle").focus();
+}
 function closeModal(){document.getElementById("modal").classList.remove("open")}
 function openAuthModal(){document.getElementById("authModal").classList.add("open")}
 function closeAuthModal(){document.getElementById("authModal").classList.remove("open")}
