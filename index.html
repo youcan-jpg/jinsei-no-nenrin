@@ -505,6 +505,8 @@ async function loadExperiences() {
         count.textContent = "—";
       }
 
+       updateTreeGrowth(0);
+
       return;
     }
 
@@ -550,10 +552,14 @@ async function loadExperiences() {
     // 投稿データを配列に変換
     const experiences = Array.from(experiencesMap.values());
 
-    // 表示できる投稿数
-    if (count) {
-      count.textContent = experiences.length;
-    }
+     // 表示できる投稿数
+if (count) {
+  count.textContent = experiences.length;
+}
+
+// 投稿数に応じて木を成長させる
+updateTreeGrowth(experiences.length);
+     
 
     // 投稿がない場合
     if (experiences.length === 0) {
