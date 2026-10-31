@@ -586,7 +586,7 @@ window.saveExperience = async () => {
 
       lesson: lesson,
 
-      isPublic: true,
+      isPublic: isPublic,
 
       createdAt: serverTimestamp()
 
@@ -595,6 +595,7 @@ window.saveExperience = async () => {
     document.getElementById("experienceTitle").value = "";
     document.getElementById("experienceStory").value = "";
     document.getElementById("experienceLesson").value = "";
+    document.getElementById("experienceVisibility").value = "true";
 
     closeModal();
 
