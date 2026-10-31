@@ -21,6 +21,112 @@ section{padding:95px 0}.section-title{text-align:center;margin-bottom:48px}.sect
 .cta{background:#dfe7dc;border-radius:35px;padding:60px;text-align:center}.cta h2{font-family:serif;font-size:44px;margin:0 0 15px}.cta p{color:#566158;line-height:2}footer{padding:50px 0 70px;color:#788078;font-size:12px}.footer-links{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:14px}.footer-links a{text-decoration:none}.footer-links a:hover{text-decoration:underline}.copyright{margin-top:20px}
 .modal{position:fixed;inset:0;background:rgba(24,30,26,.55);display:none;place-items:center;z-index:50;padding:20px}.modal.open{display:grid}.modal-box{background:#fffdf8;max-width:620px;width:100%;max-height:90vh;overflow:auto;border-radius:26px;padding:30px;position:relative}.close{position:absolute;right:18px;top:15px;border:0;background:transparent;font-size:25px;cursor:pointer}textarea{width:100%;min-height:130px;border:1px solid var(--line);border-radius:16px;padding:14px;resize:vertical;background:#faf8f1}input[type="email"],input[type="password"]{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:12px;background:#faf8f1}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#27322a;color:#fff;padding:12px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:.3s;z-index:80;font-size:13px}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 @media(max-width:850px){.hero,.demo-grid,.tree-growth{grid-template-columns:1fr}.hero{padding-top:45px}.hero-tree{height:500px}.grid3{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}.navlinks{display:none}.cta{padding:42px 22px}}
+
+
+/* =====================================
+   デジタルの木：成長段階
+===================================== */
+
+/* 幹の成長 */
+.webtree .wt {
+  transition: height 1s ease, width 1s ease;
+}
+
+/* 枝の成長 */
+.webtree .wb {
+  opacity: 0;
+  transform-origin: left center;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* 葉の成長 */
+.webtree .wleaf {
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* 第1段階：若木（0〜4件） */
+.webtree[data-stage="0"] .wt {
+  height: 115px;
+  width: 28px;
+}
+
+.webtree[data-stage="0"] .wb {
+  opacity: 0;
+}
+
+.webtree[data-stage="0"] .wleaf:nth-of-type(n+3) {
+  opacity: 0;
+}
+
+/* 第2段階：枝が伸びる（5〜9件） */
+.webtree[data-stage="1"] .wt {
+  height: 155px;
+  width: 34px;
+}
+
+.webtree[data-stage="1"] .wb.a,
+.webtree[data-stage="1"] .wb.b {
+  opacity: 1;
+}
+
+.webtree[data-stage="1"] .wleaf:nth-of-type(n+5) {
+  opacity: 0;
+}
+
+/* 第3段階：葉が増える（10〜19件） */
+.webtree[data-stage="2"] .wt {
+  height: 190px;
+  width: 40px;
+}
+
+.webtree[data-stage="2"] .wb.a,
+.webtree[data-stage="2"] .wb.b,
+.webtree[data-stage="2"] .wb.c {
+  opacity: 1;
+}
+
+.webtree[data-stage="2"] .wleaf:nth-of-type(n+7) {
+  opacity: 0;
+}
+
+/* 第4段階：大きく成長（20〜39件） */
+.webtree[data-stage="3"] .wt {
+  height: 225px;
+  width: 46px;
+}
+
+.webtree[data-stage="3"] .wb {
+  opacity: 1;
+}
+
+.webtree[data-stage="3"] .wleaf:nth-of-type(n+10) {
+  opacity: 0;
+}
+
+/* 第5段階：豊かな大木（40件以上） */
+.webtree[data-stage="4"] .wt {
+  height: 265px;
+  width: 54px;
+}
+
+.webtree[data-stage="4"] .wb {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.webtree[data-stage="4"] .wleaf {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* 成長を滑らかに見せる */
+.webtree .wt,
+.webtree .wb,
+.webtree .wleaf {
+  transition: all 1s ease;
+}
+
+  
 </style>
 </head>
 <body>
