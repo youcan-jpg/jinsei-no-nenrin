@@ -333,6 +333,11 @@ window.logoutEmail = async () => {
 // 公開されている経験を読み込む
 // =====================================
 
+
+// =====================================
+// 公開投稿と自分の非公開投稿を読み込む
+// =====================================
+
 async function loadExperiences() {
 
   const list = document.getElementById("experiencesList");
@@ -350,7 +355,7 @@ async function loadExperiences() {
       const message = document.createElement("p");
 
       message.textContent =
-        "ほかの人の経験を閲覧するには、ログインまたは新規登録してください。";
+        "経験を閲覧するには、ログインまたは新規登録してください。";
 
       list.appendChild(message);
 
@@ -361,35 +366,65 @@ async function loadExperiences() {
       return;
     }
 
-    // 公開投稿だけ取得
-    const q = query(
+    // ① 全利用者の公開投稿を取得
+    const publicQuery = query(
       collection(db, "experiences"),
       where("isPublic", "==", true)
     );
 
-    const snapshot = await getDocs(q);
+    // ② 自分の投稿を取得（公開・非公開の両方）
+    const ownQuery = query(
+      collection(db, "experiences"),
+      where("uid", "==", currentUser.uid)
+    );
 
+    // 2つの検索を同時に実行
+    const [publicSnapshot, ownSnapshot] = await Promise.all([
+      getDocs(publicQuery),
+      getDocs(ownQuery)
+    ]);
+
+    // 投稿IDを使って重複を防ぐ
+    const experiencesMap = new Map();
+
+    publicSnapshot.docs.forEach(doc => {
+
+      experiencesMap.set(doc.id, {
+        id: doc.id,
+        ...doc.data()
+      });
+
+    });
+
+    ownSnapshot.docs.forEach(doc => {
+
+      experiencesMap.set(doc.id, {
+        id: doc.id,
+        ...doc.data()
+      });
+
+    });
+
+    // 投稿データを配列に変換
+    const experiences = Array.from(experiencesMap.values());
+
+    // 表示できる投稿数
     if (count) {
-      count.textContent = snapshot.size;
+      count.textContent = experiences.length;
     }
 
-    if (snapshot.empty) {
+    // 投稿がない場合
+    if (experiences.length === 0) {
 
       const message = document.createElement("p");
 
       message.textContent =
-        "まだ公開されている経験はありません。";
+        "まだ経験が投稿されていません。最初の経験を残してみましょう。";
 
       list.appendChild(message);
 
       return;
     }
-
-    // 投稿データを取得
-    const experiences = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
 
     // 新しい投稿を上に表示
     experiences.sort((a, b) => {
@@ -398,6 +433,7 @@ async function loadExperiences() {
       const timeB = b.createdAt?.toMillis?.() ?? 0;
 
       return timeB - timeA;
+
     });
 
     // 投稿カードを作成
@@ -406,26 +442,55 @@ async function loadExperiences() {
       const card = document.createElement("article");
       card.className = "card";
 
+      // 公開範囲の表示
+      const visibility = document.createElement("small");
+
+      if (item.uid === currentUser.uid && item.isPublic === false) {
+
+        visibility.textContent = "🔒 あなたの非公開投稿";
+
+      } else {
+
+        visibility.textContent = "🌱 公開投稿";
+
+      }
+
+      visibility.style.display = "block";
+      visibility.style.marginBottom = "10px";
+      visibility.style.color = "#56735b";
+
+      // テーマ
       const theme = document.createElement("small");
+
       theme.textContent = item.theme || "人生の経験";
       theme.style.color = "#56735b";
 
+      // タイトル
       const title = document.createElement("h3");
+
       title.textContent = item.title || "誰かの人生の経験";
 
+      // 経験
       const storyHeading = document.createElement("strong");
+
       storyHeading.textContent = "経験";
 
       const story = document.createElement("p");
+
       story.textContent = item.story || "";
 
+      // 学んだこと
       const lessonHeading = document.createElement("strong");
+
       lessonHeading.textContent = "感じたこと・学んだこと";
 
       const lesson = document.createElement("p");
+
       lesson.textContent = item.lesson || "";
 
+      // 投稿日
       const date = document.createElement("small");
+
       date.style.color = "#687169";
 
       if (item.createdAt?.toDate) {
@@ -433,9 +498,11 @@ async function loadExperiences() {
         date.textContent = item.createdAt
           .toDate()
           .toLocaleDateString("ja-JP");
+
       }
 
       card.append(
+        visibility,
         theme,
         title,
         storyHeading,
@@ -446,6 +513,7 @@ async function loadExperiences() {
       );
 
       list.appendChild(card);
+
     });
 
   } catch (e) {
@@ -455,13 +523,16 @@ async function loadExperiences() {
     list.replaceChildren();
 
     error.textContent =
-      "経験を読み込めませんでした。Firebaseの設定を確認してください。";
+      "経験を読み込めませんでした。Firebaseの設定やFirestoreルールを確認してください。";
 
     if (count) {
       count.textContent = "—";
     }
+
   }
+
 }
+
 
 
 // =====================================
@@ -481,7 +552,10 @@ window.saveExperience = async () => {
 
   const theme =
     document.querySelector(".theme.active")?.dataset.theme || "その他";
+  const isPublic =
+  document.getElementById("experienceVisibility").value === "true";
 
+  
   if (!currentUser) {
 
     showToast("投稿するにはログインしてください。");
