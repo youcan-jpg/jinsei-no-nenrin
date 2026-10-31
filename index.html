@@ -191,13 +191,21 @@ const authReady = new Promise((resolve, reject) => {
 });
 
 
-// 公開されている経験を読み込む
+
+// 公開されている経験をFirestoreから読み込む
 async function loadExperiences() {
   const list = document.getElementById("experiencesList");
   const error = document.getElementById("experiencesError");
   const count = document.getElementById("count");
 
   try {
+    list.textContent = "投稿を読み込んでいます...";
+    error.textContent = "";
+
+    // ★重要：Firebaseの匿名認証が完了するまで待つ
+    await authReady;
+
+    // 公開設定がtrueの投稿だけ取得する
     const q = query(
       collection(db, "experiences"),
       where("isPublic", "==", true)
@@ -205,19 +213,22 @@ async function loadExperiences() {
 
     const snapshot = await getDocs(q);
 
-    // 公開経験数を更新
-    count.textContent = snapshot.size;
+    // 投稿数を更新
+    if (count) {
+      count.textContent = snapshot.size;
+    }
 
     list.replaceChildren();
-    error.textContent = "";
 
     if (snapshot.empty) {
       const message = document.createElement("p");
-      message.textContent = "まだ公開されている経験はありません。";
+      message.textContent =
+        "まだ公開されている経験はありません。";
       list.appendChild(message);
       return;
     }
 
+    // 投稿データを取得
     const experiences = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
@@ -230,6 +241,7 @@ async function loadExperiences() {
       return timeB - timeA;
     });
 
+    // 投稿カードを作成
     experiences.forEach(item => {
       const card = document.createElement("article");
       card.className = "card";
@@ -279,16 +291,23 @@ async function loadExperiences() {
     console.error("経験の読み込みエラー:", e);
 
     list.replaceChildren();
-    error.textContent =
-      "経験を読み込めませんでした。Firestoreの設定を確認してください。";
 
-    count.textContent = "—";
+    error.textContent =
+      "投稿を読み込めませんでした。";
+
+    if (count) {
+      count.textContent = "—";
+    }
+
+    // 原因を詳しく確認する
+    console.error("エラーコード:", e.code);
+    console.error("エラー内容:", e.message);
   }
 }
 
+// ページを開いたときに投稿を読み込む
+loadExperiences();
 
-// 経験をFirestoreに保存
-window.saveExperience = async () => {
   const title = document
     .getElementById("experienceTitle").value.trim();
 
